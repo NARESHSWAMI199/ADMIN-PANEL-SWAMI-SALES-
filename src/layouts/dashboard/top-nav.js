@@ -26,7 +26,7 @@ export const TopNav = (props) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
   const auth = useAuth()
-  const user = auth.user
+  const user = auth.user!=null ? auth.user : {};
   return (
     <>
       <Box
@@ -113,12 +113,12 @@ export const TopNav = (props) => {
           </Stack>
         </Stack>
       </Box>
-      {!!user ?  <AccountPopover
+       <AccountPopover
         anchorEl={accountPopover.anchorRef.current}
         open={accountPopover.open}
         onClose={accountPopover.handleClose}
         user = {user}
-      /> : <></>}
+      />
     </>
   );
 };

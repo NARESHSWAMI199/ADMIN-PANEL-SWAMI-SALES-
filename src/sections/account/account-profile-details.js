@@ -13,30 +13,15 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  },
-  {
-    value: 'los-angeles',
-    label: 'Los Angeles'
-  }
-];
-
 export const AccountProfileDetails = (props) => {
 
   const [values,setValues] = useState(props.user)
+
+
+  useEffect(()=>{
+    setValues(props.user)
+  },[props.user])
+
   const handleChange = useCallback(
     (event) => {
       setValues((prevState) => ({
@@ -89,7 +74,7 @@ export const AccountProfileDetails = (props) => {
                   name="username"
                   onChange={handleChange}
                   required
-                  value={values.username}
+                  value={values.username || ''}
                 />
 
 
@@ -104,7 +89,7 @@ export const AccountProfileDetails = (props) => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 name='userType'
-                value={values.userType}
+                value={values.userType ||''}
                 label="User type"
                 onChange={handleChange}
               >
@@ -123,7 +108,7 @@ export const AccountProfileDetails = (props) => {
                   name="email"
                   onChange={handleChange}
                   required
-                  value={values.email}
+                  value={values.email || ''}
                 />
               </Grid>
               <Grid
@@ -136,7 +121,7 @@ export const AccountProfileDetails = (props) => {
                   name="contact"
                   onChange={handleChange}
                   type="number"
-                  value={values.contact}
+                  value={values.contact || ''}
                 />
               </Grid>
               {/* <Grid

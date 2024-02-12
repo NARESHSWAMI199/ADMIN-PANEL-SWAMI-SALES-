@@ -113,7 +113,7 @@ const Page = () => {
                   md={6}
                   lg={8}
                 >
-                {Object.keys(content).length !== 0 ? <AccountProfileDetails user={content} updateProfile={updateProfile} /> : <></>}
+                 <AccountProfileDetails user={content} updateProfile={updateProfile} /> 
                 </Grid>
               </Grid>
             </div>

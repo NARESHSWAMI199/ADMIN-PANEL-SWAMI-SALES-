@@ -3,12 +3,15 @@ import { format } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import DiscountIcon from '@mui/icons-material/Discount';
 import {
   Avatar,
   Badge,
   Box,
   Card,
   Checkbox,
+  Rating,
   Stack,
   Table,
   TableBody,
@@ -27,7 +30,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-
+import { Image } from 'antd';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import React, {useEffect, useState } from 'react';
@@ -35,7 +38,7 @@ import Link from 'next/link';
 import EditIcon from '@mui/icons-material/Edit';
 
 
-export const CustomersTable = (props) => {
+export const ItemsTable = (props) => {
   const {
     count = 0,
     onDeselectAll,
@@ -73,6 +76,18 @@ export const CustomersTable = (props) => {
   }
 
 
+  const changeInStock = (slug,inStock) => {
+    setItems((items) => {
+        items.filter((_, index) => {
+          if(_.slug === slug) return _.inStock = inStock
+          return _;
+        })
+        return items
+    });
+      props.onChangeInStock(slug,inStock)
+  }
+
+
   useEffect(()=>{
     setItems(props.items)
   },[props.items])
@@ -92,6 +107,8 @@ export const CustomersTable = (props) => {
       props.onDelete(slug)
     }else if (action == 'status'){
       changeStatus(slug,status)
+    }else if (action == 'stock'){
+      changeInStock(slug,status)
     }
     setConfirm(false)
   }
@@ -119,20 +136,29 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Name
                 </TableCell>
+
                 <TableCell>
-                  TOKEN ID
+                  label
                 </TableCell>
+
                 <TableCell>
-                  USER TYPE
+                  Rating
                 </TableCell>
+         
                 <TableCell>
-                  Email
+                 M.R.P
                 </TableCell>
-                {/* <TableCell>
-                  Location
-                </TableCell> */}
+
                 <TableCell>
-                  Phone
+                  Discount
+                </TableCell>
+
+                <TableCell>
+                  Price
+                </TableCell>
+
+                <TableCell>
+                  Stock
                 </TableCell>
 
                 <TableCell>
@@ -140,22 +166,23 @@ export const CustomersTable = (props) => {
                 </TableCell>
 
                 <TableCell>
-                  Signed Up
+                  Created at
                 </TableCell>
+
                 <TableCell>
                   ACTIONS
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((customer,index) => {
-                const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+              {items.map((item,index) => {
+                const isSelected = selected.includes(item.id);
+                const createdAt = format(item.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
                     hover
-                    key={customer.id}
+                    key={item.id}
                     selected={isSelected}
                   >
                     <TableCell padding="checkbox">
@@ -163,9 +190,9 @@ export const CustomersTable = (props) => {
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(customer.slug);
+                            onSelectOne?.(item.slug);
                           } else {
-                            onDeselectOne?.(customer.slug);
+                            onDeselectOne?.(item.slug);
                           }
                         }}
                       />
@@ -176,60 +203,101 @@ export const CustomersTable = (props) => {
                         direction="row"
                         spacing={2}
                       >      
-                  <Link
-                      href={{
-                        pathname: '/account/[slug]',
-                        query: { slug: customer.slug },
-                      }}
-                    >
-                        <Avatar src={customer.avatar} >
-                          {getInitials(customer.username)}
+            {!!item.avatar ? <Image src='item.avtar'/>  : 
+                        <Avatar src={item.avatar} >
+                          {getInitials(item.name)}
                         </Avatar>
-                        </Link>
-                        <Typography variant="subtitle2">
-                          {customer.username}
-                        </Typography>
+                        }
+                   
+                      <Typography variant="subtitle2">
+                      {item.name}
+                    </Typography>
+                         
                       </Stack>
                     </TableCell>
-                    <TableCell sx={{color:'green'}}>
-                      {customer.slug}
-                    </TableCell>
+
                     <TableCell align='center'>
-                        {customer.userType === "R" && <Badge color="error" badgeContent={'Retailer'} />}
+                        {item.label === "O" && <Badge color="error" badgeContent={'Old'} />}
+                        {item.label === "N" && <Badge color="success" badgeContent={'New'} />}
+                    </TableCell>
+                    <TableCell>
+                        <Rating name="read-only" value={item.rating} readOnly />
+                    </TableCell>
 
-                        {customer.userType === "W" && 
-                          <Link
-                                href={{
-                                  pathname: '/wholesale/[slug]',
-                                  query: { slug: customer.slug },
-                                }}
-                              >
-                        <Badge color="success" badgeContent={'Wholesaler'} />
-                        </Link>
-                        }
+                    <TableCell>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={2}
+                      >
+                        {item.price}
+                      <CurrencyRupeeIcon sx={{fontSize:'15px',mt:'20px'}}/>
+                      </Stack>
+                    </TableCell>
+
+
+                    <TableCell>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={2}
+                      >
+                        {item.discount}
+                      <CurrencyRupeeIcon sx={{fontSize:'15px',mt:'20px'}}/>
+                      <DiscountIcon sx={{color:'red',fontSize:'20px',mt:'20px',px:'0px'}} />
+
+                      </Stack>
+                    </TableCell>
+                    <TableCell>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={2}
+                      >
+                        {item.price-item.discount}
+                      <CurrencyRupeeIcon sx={{fontSize:'15px',mt:'20px'}}/>
+                      </Stack>
+                    </TableCell>
+
+                    
+                    <TableCell>
+                     {item.inStock !== 'Y' ? <CancelIcon sx={ {
+                        marginX : '2px',
+                        color : 'Red'
                         
-                        {customer.userType === "S" && <Badge color="primary" badgeContent={'Staff'} />}
-                    </TableCell>
-                    <TableCell>
-                      {customer.email}
-                    </TableCell>
-                    {/* <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
-                    </TableCell> */}
-                    <TableCell>
-                      {customer.contact}
+                        } }  titleAccess='In stock' onClick={(e)=> {
+                          setMessage("We are going to add the item in stock.")
+                          setSlug(item.slug)
+                          setStatus('Y')
+                          setAction('stock')
+                          confirmBox()
+                        }} />
+
+                      : 
+                      <CheckCircleIcon sx={ {
+                        marginX : '2px',
+                        color : 'Green'
+                        
+                        } } titleAccess='Out of stock' onClick={(e)=> {
+                          setMessage("We are going to remove item from the stock.")
+                          setSlug(item.slug)
+                          setStatus('N')
+                          setAction('stock')
+                          confirmBox()
+                        }} />
+                      }
                     </TableCell>
 
 
                     <TableCell>
-                      {/* {setStatus(customer.status)} */}
-                     {customer.status !== 'A' ? <CancelIcon sx={ {
+                      {/* {setStatus(item.status)} */}
+                     {item.status !== 'A' ? <CancelIcon sx={ {
                         marginX : '2px',
                         color : 'Red'
                         
                         } }  titleAccess='activate' onClick={(e)=> {
                           setMessage("We are going to activate this user.")
-                          setSlug(customer.slug)
+                          setSlug(item.slug)
                           setStatus('A')
                           setAction('status')
                           confirmBox()
@@ -242,7 +310,7 @@ export const CustomersTable = (props) => {
                         
                         } } titleAccess='deactivate' onClick={(e)=> {
                           setMessage("We are going to deactivate this user.")
-                          setSlug(customer.slug)
+                          setSlug(item.slug)
                           setStatus('D')
                           setAction('status')
                           confirmBox()
@@ -258,8 +326,8 @@ export const CustomersTable = (props) => {
                                         
                       <Link
                             href={{
-                              pathname: '/account/[slug]',
-                              query: { slug: customer.slug },
+                              pathname: '/item/[slug]',
+                              query: { slug: item.slug },
                             }}
                           >
                               <EditIcon sx = {{
@@ -274,9 +342,9 @@ export const CustomersTable = (props) => {
                         color : 'Red'
                         
                         } }  titleAccess='delete' onClick={(e)=>{
-                          setSlug(customer.slug)
+                          setSlug(item.slug)
                           setRowIndex(index)
-                          setMessage("We are going to delete this user if user type is wholesaler then user's store will also delete. if you agree press agree otherwise press disagree.")
+                          setMessage("We are going to delete this item if you agree press agree otherwise press disagree.")
                           setAction("delete")
                           confirmBox()
                           }} />
@@ -331,7 +399,7 @@ export const CustomersTable = (props) => {
   );
 };
 
-CustomersTable.propTypes = {
+ItemsTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,

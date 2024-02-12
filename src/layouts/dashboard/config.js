@@ -64,6 +64,16 @@ export const items = [
       </SvgIcon>
     )
   },
+
+  {
+    title: 'Add User',
+    path: '/users/create',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CogIcon />
+      </SvgIcon>
+    )
+  },
   
   {
     title: 'Settings',
@@ -74,6 +84,9 @@ export const items = [
       </SvgIcon>
     )
   },
+
+
+    
 
 
   // {

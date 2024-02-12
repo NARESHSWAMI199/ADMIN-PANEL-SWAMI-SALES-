@@ -7,10 +7,11 @@ import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orde
 import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from 'src/hooks/use-auth';
 import { host } from 'src/utils/util';
+
 
 
 
@@ -63,6 +64,9 @@ useEffect( ()=>{
 
   },[])
 
+  const getPercentage = useCallback((currentCount,totalCount) =>{
+    return Math.round((currentCount/totalCount) * 100);
+  },[])
   return ( <>
     <Head>
       <title>
@@ -196,8 +200,12 @@ useEffect( ()=>{
             lg={4}
           >
             <OverviewTraffic
-              chartSeries={[63, 15, 22]}
-              labels={['Desktop', 'Tablet', 'Phone']}
+              chartSeries={[
+                getPercentage(dashboardData.wholesalers.all, dashboardData.users.all), 
+                getPercentage(dashboardData.staffs.all, dashboardData.users.all), 
+                getPercentage(dashboardData.retailers.all, dashboardData.users.all), 
+              ]}
+              labels={['Wholesalers', 'Staffs', 'Retailers']}
               sx={{ height: '100%' }}
             />
           </Grid>

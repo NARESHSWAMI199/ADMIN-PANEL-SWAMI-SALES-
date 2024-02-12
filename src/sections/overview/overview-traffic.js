@@ -1,7 +1,4 @@
 import PropTypes from 'prop-types';
-import ComputerDesktopIcon from '@heroicons/react/24/solid/ComputerDesktopIcon';
-import DeviceTabletIcon from '@heroicons/react/24/solid/DeviceTabletIcon';
-import PhoneIcon from '@heroicons/react/24/solid/PhoneIcon';
 import {
   Box,
   Card,
@@ -13,7 +10,9 @@ import {
   useTheme
 } from '@mui/material';
 import { Chart } from 'src/components/chart';
-
+import { StoreOutlined, VerifiedOutlined } from '@mui/icons-material';
+import UserIcon from '@heroicons/react/24/solid/UserIcon';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 const useChartOptions = (labels) => {
   const theme = useTheme();
 
@@ -63,19 +62,19 @@ const useChartOptions = (labels) => {
 };
 
 const iconMap = {
-  Desktop: (
+  Wholesalers: (
     <SvgIcon>
-      <ComputerDesktopIcon />
+      <StoreOutlined />
     </SvgIcon>
   ),
-  Tablet: (
+  Staffs: (
     <SvgIcon>
-      <DeviceTabletIcon />
+      <VerifiedOutlined />
     </SvgIcon>
   ),
-  Phone: (
+  Retailers: (
     <SvgIcon>
-      <PhoneIcon />
+      <AddShoppingCartIcon/>
     </SvgIcon>
   )
 };
@@ -86,7 +85,7 @@ export const OverviewTraffic = (props) => {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Traffic Source" />
+      <CardHeader title="User Graph" />
       <CardContent>
         <Chart
           height={300}
