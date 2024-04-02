@@ -11,6 +11,9 @@ import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 @Transactional
@@ -71,6 +74,73 @@ public class ItemHbRepository{
         query.setParameter("slug",slug);
         return query.executeUpdate();
     }
+
+    public int insertItemsList(Map itemsData,int userId,int wholesaleId){
+        List nameList = (List) itemsData.get("NAME");
+        List labelList = (List) itemsData.get("LABEL");
+        List priceList = (List) itemsData.get("PRICE");
+        List discountlist = (List) itemsData.get("DISCOUNT");
+        List descriptionList = (List) itemsData.get("DESCRIPTION");
+        List avatarList = (List) itemsData.get("AVATAR");
+        List in_stockList = (List) itemsData.get("STOCK");
+
+        String dataList = "";
+        for (int i = 0; i < nameList.size(); i++){
+            String label = labelList.get(i).equals("") ? "N" : (String) labelList.get(i);
+            String in_stock = in_stockList.get(i).equals("") ? "N" : (String) in_stockList.get(i);
+            String discount = discountlist.get(i).equals("") ? "0" : (String) discountlist.get(i);
+            String status = "A";
+            int price = 0;
+            if (priceList.get(i).equals("")){
+                status = "D";
+            }else {
+                price = Integer.valueOf((String) priceList.get(i));
+            }
+            dataList += "(" +
+                "'"+nameList.get(i) +"'," +
+                    wholesaleId +","+
+                "'"+label+"'," +
+                    price +"," +
+                    discount +"," +
+                "'"+ descriptionList.get(i) +"'," +
+                "'"+avatarList.get(i) +"'," +
+                "'0'," +
+                "'"+status+"'," +
+                "'N'," +
+                    Utils.getCurrentMillis() +"," +
+                    userId +"," +
+                    Utils.getCurrentMillis()+"," +
+                    userId +"," +
+                "'"+UUID.randomUUID()+"',"+
+                "'"+in_stock+"'" +
+                    ")";
+            if (i != nameList.size()-1) dataList+=",";
+        }
+        System.out.println(dataList);
+
+        String qs = "insert into item (" +
+                "name," +
+                "wholesale_id," +
+                "label," +
+                "price," +
+                "discount," +
+                "description," +
+                "avatar," +
+                "rating," +
+                "status," +
+                "is_deleted," +
+                "created_at," +
+                "created_by," +
+                "updated_at," +
+                "updated_by," +
+                "slug," +
+                "in_stock" +
+                ") values " + dataList ;
+
+        Query query = entityManager.createNativeQuery(qs);
+        return  query.executeUpdate();
+    }
+
 
 
 }

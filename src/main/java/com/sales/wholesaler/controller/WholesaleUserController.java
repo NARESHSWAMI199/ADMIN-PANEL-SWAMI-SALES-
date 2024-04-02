@@ -24,6 +24,7 @@ public class WholesaleUserController extends WholesaleServiceContainer {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> findByEmailAndPassword(@RequestBody Map<String,String> param) {
+        logger.info("=============LOGIN PROCESSES STARTED =====================");
         Map<String, Object> responseObj = new HashMap<>();
         User user = wholesaleUserService.findByEmailAndPassword(param);
         if (user == null) {

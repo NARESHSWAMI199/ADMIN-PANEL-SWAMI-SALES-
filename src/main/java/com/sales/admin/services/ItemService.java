@@ -1,6 +1,7 @@
 package com.sales.admin.services;
 
 
+import com.google.gson.Gson;
 import com.sales.dao.ItemsDao;
 import com.sales.dto.ItemDto;
 import com.sales.dto.SearchFilters;
@@ -16,9 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 import static com.sales.specifications.ItemsSpecifications.*;
 
@@ -45,6 +45,35 @@ public class ItemService extends RepoContainer implements ItemsDao {
     }
 
 
+    public Map<String, List> createItemsExcelSheet(SearchFilters searchFilters) throws IOException {
+        int wholesaleId = searchFilters.getStoreId();
+        Long fromDate = searchFilters.getFromDate();
+        Long toDate = searchFilters.getToDate();
+        Store store = new Store();
+        store.setId(wholesaleId);
+        List<Item> itemsList =  itemRepository.getAllItemsWithFilters(store,fromDate,toDate);
+        Map<String,List> result = new HashMap<>();
+        for (Item item : itemsList){
+            String items = new Gson().toJson(item);
+            Map<String,Object> itemMap = new Gson().fromJson(items,Map.class);
+            itemMap.forEach((key,value)->{
+                if(key.equals("wholesale")){
+                    /** skip... */
+                }
+                else if (result.containsKey(key.toUpperCase())){
+                    ((List)result.get(key.toUpperCase())).add(itemMap.get(key));
+                }else {
+                    List valueList = new ArrayList<>();
+                    valueList.add(value);
+                    result.put(key.toUpperCase(),valueList);
+                }
+            });
+        }
+        int totalItem = itemsList.size();
+        String [] headers = {"SLUG","NAME","LABEL", "DESCRIPTION", "PRICE", "DISCOUNT", "RATING","INSTOCK","STATUS","CREATEDAT","UPDATEDAT"};
+        writeExcel.writeExcel(result,totalItem,Arrays.asList(headers));
+        return  result;
+    }
 
     public Map<String, Integer> getItemCounts () {
         Map<String,Integer> responseObj = new HashMap<>();
@@ -126,6 +155,12 @@ public class ItemService extends RepoContainer implements ItemsDao {
 
     public int updateStatusBySlug(StatusDto statusDto){
         return itemHbRepository.updateStatus(statusDto.getSlug(),statusDto.getStatus());
+    }
+
+    public int insertAllItems (Map excel,Integer userId, Integer wholesaleId){
+        userId = userId == null ? 0 : userId;
+        wholesaleId = wholesaleId == null ? 0 : wholesaleId;
+        return  itemHbRepository.insertItemsList(excel,userId,wholesaleId);
     }
 
 }

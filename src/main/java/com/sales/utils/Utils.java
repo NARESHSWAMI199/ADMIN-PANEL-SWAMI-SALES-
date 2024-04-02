@@ -19,7 +19,7 @@ public class Utils {
     public static String getMillisToDate(Long millis){
         DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm:ss:SSS Z");
         Date date = new Date(millis);
-        return format.format((date));
+        return format.format(date);
     }
 
 

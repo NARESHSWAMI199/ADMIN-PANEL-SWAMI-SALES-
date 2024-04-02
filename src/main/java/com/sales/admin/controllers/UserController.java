@@ -33,6 +33,7 @@ public class UserController extends ServiceContainer {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> findByEmailAndPassword(@RequestBody UserDto userDetails) {
+        logger.info("====================== ADMIN LOGIN PROCESS STARTED ======================");
         Map<String, Object> responseObj = new HashMap<>();
         User user = userService.findByEmailAndPassword(userDetails);
         if (user == null) {

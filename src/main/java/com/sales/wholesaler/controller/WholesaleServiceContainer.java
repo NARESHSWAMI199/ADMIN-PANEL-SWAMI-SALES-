@@ -7,6 +7,8 @@ import com.sales.wholesaler.services.WholesaleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Logger;
+
 @Component
 public class WholesaleServiceContainer {
     @Autowired
@@ -17,6 +19,9 @@ public class WholesaleServiceContainer {
 
     @Autowired
     protected WholesaleItemService wholesaleItemService;
+
+    @Autowired
+    Logger logger;
 
     @Autowired
     protected AddressService addressService;
